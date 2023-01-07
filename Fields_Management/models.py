@@ -10,6 +10,8 @@ class Course(models.Model):
 
 class Field(models.Model):
     company_name = models.CharField(max_length=200, null=False)
+    phone = models.CharField(max_length=200, null=False)
+    email = models.EmailField(null=False)
     location = models.CharField(max_length=200, null=False)
     meata_details = models.TextField(max_length=500, null=False)
     details = models.TextField(max_length=500, null=False)
