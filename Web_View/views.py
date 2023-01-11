@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from Fields_Management.models import Field, Course, Student, StudentList
+from Fields_Management.models import Field, Course, Student, StudentList, FieldImage
 from Web_View.serializer import NewStudent
 
 
@@ -72,7 +72,23 @@ def moreDetails(request, pk):
     if request.user.is_authenticated:
         try:
             field = Field.objects.get(id=pk)
-            return render(request, 'more_details.html', {"field": field})
+            images = []
+            _images = FieldImage.objects.filter(field_id=field.id)
+            print(_images)
+            for i in range(0, len(_images)):
+                print(i)
+                data = dict({
+                        "title": _images[i].title,
+                        "class": "carousel-item",
+                        "image": _images[i].image,
+                    })
+                print(_images[i].image.url)
+                if i == 0:
+                    data['class'] = "carousel-item active"
+                images.append(data)
+            return render(
+                request, 'more_details.html', {"field": field, "images": images}
+            )
         except Field.DoesNotExist as e:
             print(e)
             return redirect('/')

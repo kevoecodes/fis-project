@@ -14,7 +14,7 @@ class Student(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.sername
+        return self.user.username
 
 
 class Field(models.Model):
@@ -24,6 +24,7 @@ class Field(models.Model):
     location = models.CharField(max_length=200, null=False)
     meta_details = models.TextField(max_length=500, null=False)
     details = models.TextField(max_length=1000, null=False)
+    open = models.BooleanField(default=True)
 
     def __str__(self):
         return self.company_name
@@ -35,11 +36,12 @@ class StudentList(models.Model):
 
 
 class FieldImage(models.Model):
+    title = models.CharField(max_length=200, null=False)
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     image = models.FileField()
 
     def __str__(self):
-        return self.image.name
+        return self.title + " " + self.image.name
 
 
 class CourseField(models.Model):
