@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Web_View.views import index, studentLogin, studentRegistration, Logout, myList
+from Web_View.views import \
+    index, studentLogin, \
+    studentRegistration, Logout, myList, moreDetails
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +25,7 @@ urlpatterns = [
     path('login', studentLogin, name='student-login'),
     path('register', studentRegistration, name='student-register'),
     path('register', studentRegistration, name='student-register'),
+    path('field/<str:pk>', moreDetails, name='student-register'),
     path('logout', Logout, name='student-logout'),
     path('my-list', myList, name='student-list'),
 ]

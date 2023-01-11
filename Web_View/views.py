@@ -68,6 +68,18 @@ def index(request):
     return redirect('/login')
 
 
+def moreDetails(request, pk):
+    if request.user.is_authenticated:
+        try:
+            field = Field.objects.get(id=pk)
+            return render(request, 'more_details.html', {"field": field})
+        except Field.DoesNotExist as e:
+            print(e)
+            return redirect('/')
+
+    return redirect('/login')
+
+
 def myList(request):
     if request.user.is_authenticated:
         fields = StudentList.objects.all()
