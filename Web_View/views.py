@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from Fields_Management.models import Field, Course, Student, StudentList, FieldImage
+from Fields_Management.models import Field, Course, Student, StudentList, FieldImage, CourseField
 from Web_View.serializer import NewStudent
 
 
@@ -61,8 +61,15 @@ def studentLogin(request):
 
 def index(request):
     if request.user.is_authenticated:
-        fields = Field.objects.all()
-
+        course_fields = CourseField.objects.all()
+        try:
+            student = Student.objects.get(user_id=request.user.id)
+            course_fields.filter(course_id=student.course.id)
+        except Student.DoesNotExist as e:
+            pass
+        fields = []
+        for i in course_fields:
+            fields.append(i.field)
         return render(request, 'index.html', {"fields": fields, "length": len(fields)})
 
     return redirect('/login')
