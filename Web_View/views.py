@@ -64,7 +64,7 @@ def index(request):
         course_fields = CourseField.objects.all()
         try:
             student = Student.objects.get(user_id=request.user.id)
-            course_fields.filter(course_id=student.course.id)
+            course_fields = course_fields.filter(course_id=student.course.id)
         except Student.DoesNotExist as e:
             pass
         fields = []
