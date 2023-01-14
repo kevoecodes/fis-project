@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from .models import *
 
-_ = [Field, Course, CourseField, FieldImage
+_ = [Field, Course, CourseField, FieldImage, Student, StudentList
      ]
 
 for i in _:
