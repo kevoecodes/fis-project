@@ -52,6 +52,11 @@
                                             <form action="/login" method="post">
                                                 {% csrf_token %}
                                                 <div class="card-body">
+                                                    <div class="row justify-content-center text-danger text-center">
+                                                        {%for message in messages%}
+                                                            {{message}}
+                                                        {% endfor %}
+                                                    </div>
                                                     <div class="edit-profile__body">
                                                         <div class="form-group mb-20">
                                                             <label for="username">Username</label>
@@ -60,8 +65,8 @@
                                                         <div class="form-group mb-15">
                                                             <label for="password-field">password</label>
                                                             <div class="position-relative">
-                                                                <input id="password-field" type="password" class="form-control" name="password" >
-                                                                <div class="fa fa-fw fa-eye-slash text-light fs-16 field-icon toggle-password2"></div>
+                                                                <input id="password" type="password" class="form-control" name="password" >
+                                                                <div id="password-field" class="fa fa-fw fa-eye-slash text-light fs-16 field-icon toggle-password2"></div>
                                                             </div>
                                                         </div>
                                                         <div class="signUp-condition signIn-condition">
@@ -110,6 +115,27 @@
     <script src="{% static 'assets/js/plugins.min.js' %}"></script>
 
     <script src="{% static 'assets/js/script.min.js' %}"></script>
+    <script>
+        const togglePassword = document
+            .querySelector('#password-field');
+
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', () => {
+
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = password
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+
+            password.setAttribute('type', type);
+
+            // Toggle the eye and bi-eye icon
+            this.classList.toggle('bi-eye');
+        });
+    </script>
+    </script>
 
     <!-- endinject-->
 </body>

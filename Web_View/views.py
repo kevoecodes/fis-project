@@ -31,7 +31,7 @@ def studentRegistration(request):
             new_student.save()
 
             return redirect('/login')
-        messages.error(request, form.errors)
+        messages.error(request, "Check for redundant data or too short password")
         return redirect('/register')
 
     courses = Course.objects.all()
@@ -47,7 +47,7 @@ def studentLogin(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # messages.info(request, f"You are now logged in as {username}.")
+                messages.info(request, f"You are now logged in as {username}.")
                 return redirect("/")
             else:
                 messages.error(request, "Invalid username or password.")
