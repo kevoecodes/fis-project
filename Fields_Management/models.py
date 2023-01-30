@@ -51,3 +51,11 @@ class CourseField(models.Model):
     def __str__(self):
         return self.field.company_name + ' ' + self.course.name
 
+
+class StudentApplication(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    file = models.FileField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)

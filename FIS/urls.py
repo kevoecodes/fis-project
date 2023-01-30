@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 from Web_View.views import \
     index, studentLogin, \
-    studentRegistration, Logout, myList, moreDetails, MyListManager
+    studentRegistration, Logout, myList, moreDetails, MyListManager, student_application
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     path('field/<str:pk>', moreDetails, name='student-register'),
     path('logout', Logout, name='student-logout'),
     path('my-list', myList, name='student-list'),
+    path('apply/<str:pk>', student_application, name='student-application'),
 
     path('api/list-manager', MyListManager.as_view(), name='list-manager')
 ]

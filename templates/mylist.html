@@ -55,24 +55,26 @@
                                     <h2 class="text-capitalize breadcrumb-title">{{ field.company_name }}</h2>
                                     </div>
                                     <div class="col-6">
-                                        <div class="row justify-content-end mr-10">
-                                         <label for="id-of-input" class="custom-checkbox">
-                                          <input type="checkbox" id="id-of-input"/>
-                                          <i class="glyphicon glyphicon-star-empty"></i>
-                                          <i class="glyphicon glyphicon-star"></i>
-                                          <span>My List</span>
-                                        </label>
+                                        <div class="row justify-content-end align-content-center text-end pr-50">
+                                            <div>
+                                                {% if field.applied %}
+                                                    <span class="badge rounded-pill bg-success">Applied</span>
+                                                {% else %}
+{#                                                    <span class="badge rounded-pill bg-danger">Closed</span>#}
+                                                {% endif %}
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row justify-content-start m-20">
                                     <p>
-                                        Nam a velit vitae lectus sodales aliquet. Morbi non efficitur ligula. Suspendisse sodales porttitor ligula, in convallis velit feugiat eu. Sed luctus, lectus quis cursus egestas, mi elit efficitur nulla, quis malesuada neque sapien ut lectus. Sed mollis pretium gravida. Nullam a ligula facilisis, molestie est in, suscipit quam. Aenean mattis elit justo, aliquam porttitor sapien fringilla a. In hac habitasse platea dictumst. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non mauris varius nisi faucibus faucibus eget ut arcu. Donec hendrerit aliquet orci, sit amet consequat enim faucibus id.
+                                        {{ field.meta_details }}
                                     </p>
                                 </div>
                                 <div class="row justify-content-end m-10">
                                     <div class="action-btn">
-                                    <a href="register-module" class="btn btn-sm btn-primary btn-add">
+                                    <a href="/field/{{ field.id }}" class="btn btn-sm btn-primary btn-add">
                                          Read More ...
                                     </a>
                                 </div>

@@ -1,7 +1,7 @@
 {% load static %}
 
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/html">
 
 
 {% include 'head.html' %}
@@ -56,13 +56,13 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="row justify-content-end mr-10">
-                                         <label for="{{ field.id }}" class="custom-checkbox">
+                                         <label for="field_{{ field.id }}" class="custom-checkbox">
                                              {% if field.is_fav %}
-                                                <input type="checkbox" checked id="{{ field.id }}"/>
+                                                <input type="checkbox" checked id="field_{{ field.id }}"/>
                                                  <i class="glyphicon glyphicon-star-empty"></i>
                                                 <i class="glyphicon glyphicon-star"></i>
                                              {% else %}
-                                                 <input type="checkbox" id="{{ field.id }}"/>
+                                                 <input type="checkbox" id="field_{{ field.id }}"/>
                                                  <i class="glyphicon glyphicon-star-empty"></i>
                                                 <i class="glyphicon glyphicon-star"></i>
                                              {% endif %}
@@ -79,10 +79,24 @@
                                 </div>
                                 <div class="row justify-content-end m-10">
                                     <div class="action-btn">
-                                    <a href="/field/{{ field.id }}" class="btn btn-sm btn-primary btn-add">
-                                         Read More ...
-                                    </a>
-                                </div>
+
+                                        {% if field.applied %}
+                                            <a href="#" class="btn btn-sm btn-success btn-add m-20">
+                                                Already Applied
+                                            </a>
+                                        {% else %}
+                                            <a href="/apply/{{ field.id }}" class="btn btn-sm btn-primary btn-add m-20">
+                                             Apply
+                                            </a>
+                                        {% endif %}
+                                        <!-- The modal -->
+
+                                    </div>
+                                    <div class="action-btn">
+                                        <a href="/field/{{ field.id }}" class="btn btn-sm btn-primary btn-add m-20">
+                                             Read More ...
+                                        </a>
+                                    </div>
                                 </div>
 
                             </div>
@@ -107,23 +121,27 @@
     <!-- inject:js-->
     <script src="{% static 'assets/js/plugins.min.js' %}"></script>
     <script src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
         let ids = JSON.parse("{{ field_ids | escapejs }}")
         let student_id = JSON.parse("{{ student_id | escapejs }}")
-        ids.forEach(id => {
-            console.log(id)
-            let chc = "1"
-            let check_component = document.getElementById(chc)
+        ids.forEach(the_id => {
+            console.log(the_id)
+            let check_component = document.getElementById("field_" + String(the_id))
             check_component.onchange = (e) => {
-                console.log(e.path[0].checked)
-                let val = e.path[0].checked
+                console.log(e.target.checked)
+                console.log(e.target.checked)
+                let val = e.target.checked
                 if (val === true) {
-                    favList(id, "1")
+                    favList(the_id, "1")
                 }
                 else {
-                    favList(id, "0")
+                    favList(the_id, "0")
                 }
             }
         })

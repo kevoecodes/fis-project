@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from Fields_Management.models import Student, StudentList
+from Fields_Management.models import Student, StudentList, StudentApplication
 
 
 class NewStudent(serializers.ModelSerializer):
@@ -14,3 +14,8 @@ class StudentListSerializer(serializers.ModelSerializer):
         model = StudentList
         fields = "__all__"
 
+
+class StudentApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentApplication
+        fields = "__all__"

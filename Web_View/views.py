@@ -1,5 +1,4 @@
 import json
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -8,8 +7,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from Fields_Management.models import Field, Course, Student, StudentList, FieldImage, CourseField
-from Web_View.serializer import NewStudent, StudentListSerializer
+from Fields_Management.models import Field, Course, Student, StudentList, FieldImage, CourseField, StudentApplication
+from Web_View.form import StudentApplicationForm
+from Web_View.serializer import NewStudent, StudentListSerializer, StudentApplicationSerializer
 
 
 def studentRegistration(request):
@@ -76,20 +76,31 @@ def index(request):
         field_ids = []
         for i in course_fields:
             is_fav = False
+            applied = False
             if student is not None:
+                try:
+                    applied_ = StudentApplication.objects.get(student_id=student.id, field_id=i.field.id)
+                    if applied_ is not None:
+                        print('Field applied')
+                        applied = True
+                except StudentApplication.DoesNotExist as e:
+                    print("Not Appleieddddd")
+                    pass
                 try:
                     fav = StudentList.objects.get(field_id=i.field.id, student_id=student.id)
                     if fav is not None:
                         is_fav = True
                 except StudentList.DoesNotExist as e:
                     pass
+
             print(is_fav)
             fields.append({
                 "id": i.field.id,
                 "company_name": i.field.company_name,
                 "phone": i.field.phone,
                 "meta_details": i.field.meta_details,
-                "is_fav": is_fav
+                "is_fav": is_fav,
+                "applied": applied
             })
             field_ids.append(i.field.id)
         return render(request, 'index.html', {
@@ -132,17 +143,40 @@ def moreDetails(request, pk):
 
 def myList(request):
     if request.user.is_authenticated:
-        fields = []
+        _fields = []
         try:
             student = Student.objects.get(user_id=request.user.id)
-            stlist = StudentList.objects.filter(student_id=student.id)
-            for i in stlist:
-                print(i.student.id)
-                fields.append(i.field)
-            print(fields)
+            fields = Field.objects.all()
+            for field in fields:
+                applied = False
+                is_fav = False
+                try:
+                    stapplied = StudentApplication.objects.get(student_id=student.id, field_id=field.id)
+                    if stapplied is not None:
+                        applied = True
+                except StudentApplication.DoesNotExist as e:
+                    print(e)
+                    pass
+                try:
+                    stlist = StudentList.objects.get(student_id=student.id, field_id=field.id)
+                    if stlist is not None:
+                        print("Is Fave")
+                        is_fav = True
+                except StudentList.DoesNotExist as e:
+                    print(e)
+                    pass
+                if is_fav or applied:
+                    print("is")
+                    _fields.append({
+                        "id": field.id,
+                        "is_fav": is_fav,
+                        "applied": applied,
+                        "company_name": field.company_name,
+                        "meta_details": field.meta_details,
+                    })
         except Student.DoesNotExist:
             pass
-        return render(request, 'mylist.html', {"fields": fields, "length": len(fields)})
+        return render(request, 'mylist.html', {"fields": _fields, "length": len(_fields)})
 
     return redirect('/login')
 
@@ -176,3 +210,31 @@ class MyListManager(APIView):
             except StudentList.DoesNotExist:
                 pass
         return Response(True)
+
+
+def student_application(request, pk):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            print(request.POST)
+
+            print(request.FILES)
+            serializer = StudentApplicationForm(request.POST, request.FILES)
+            if serializer.is_valid():
+                serializer.save()
+                messages.success(request, "Successfully Applied")
+                print("Success")
+            else:
+                print(serializer.errors)
+                messages.error(request, serializer.errors)
+            return redirect('/')
+        elif request.method == "GET":
+            try:
+                field = Field.objects.get(id=pk)
+                student = Student.objects.get(user_id=request.user.id)
+                return render(request, 'application.html', {"field": field, "student_id": student.id})
+            except (Field.DoesNotExist, Student.DoesNotExist):
+                return redirect('/')
+
+        return redirect('/')
+    return redirect('/login')
+
