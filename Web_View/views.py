@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from Fields_Management.models import Field, Course, Student, StudentList, FieldImage, CourseField, StudentApplication
 from Web_View.form import StudentApplicationForm
-from Web_View.serializer import NewStudent, StudentListSerializer, StudentApplicationSerializer
+from Web_View.serializer import NewStudent, StudentListSerializer, StudentApplicationSerializer, FieldSerializer, \
+    CourseFieldSerializer, FieldImageForm, CourseForm
 
 
 def studentRegistration(request):
@@ -57,7 +58,6 @@ def studentLogin(request):
             return redirect('/login')
 
     if request.method == "GET":
-
         return render(request, 'login.html')
 
 
@@ -123,10 +123,10 @@ def moreDetails(request, pk):
             for i in range(0, len(_images)):
                 print(i)
                 data = dict({
-                        "title": _images[i].title,
-                        "class": "carousel-item",
-                        "image": _images[i].image,
-                    })
+                    "title": _images[i].title,
+                    "class": "carousel-item",
+                    "image": _images[i].image,
+                })
                 print(_images[i].image.url)
                 if i == 0:
                     data['class'] = "carousel-item active"
@@ -148,12 +148,14 @@ def myList(request):
             student = Student.objects.get(user_id=request.user.id)
             fields = Field.objects.all()
             for field in fields:
+                status = 33
                 applied = False
                 is_fav = False
                 try:
                     stapplied = StudentApplication.objects.get(student_id=student.id, field_id=field.id)
                     if stapplied is not None:
                         applied = True
+                        status = stapplied.status
                 except StudentApplication.DoesNotExist as e:
                     print(e)
                     pass
@@ -171,6 +173,7 @@ def myList(request):
                         "id": field.id,
                         "is_fav": is_fav,
                         "applied": applied,
+                        "status": status,
                         "company_name": field.company_name,
                         "meta_details": field.meta_details,
                     })
@@ -238,3 +241,132 @@ def student_application(request, pk):
         return redirect('/')
     return redirect('/login')
 
+
+def add_field(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        if request.method == "POST":
+            print(request.POST)
+            print(request.FILES['image_1'])
+            register_field = RegisterField(data=request.POST, files=request.FILES)
+            print(register_field.status, register_field.errors, register_field.stage)
+            if register_field.status:
+                return redirect('/')
+            else:
+                return redirect('/add-field')
+            # return redirect('/add-field')
+
+        elif request.method == "GET":
+            courses = Course.objects.all()
+            return render(request, 'add_field.html', {"courses": courses})
+
+    return redirect('/login')
+
+
+def addCourse(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        if request.method == "POST":
+
+            form = CourseForm(data=request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('/')
+            return redirect('/add-course')
+
+        elif request.method == "GET":
+            return render(request, 'add_course.html', )
+
+    return redirect('/')
+
+
+def view_applications(request, pk=None):
+    if request.user.is_authenticated and request.user.is_staff:
+        if request.method == "GET":
+            applications = StudentApplication.objects.all()
+            if pk is not None:
+                applications = applications.filter(field_id=pk)
+            return render(request, 'view_applications.html', {"applications": applications})
+
+    return redirect('/login')
+
+
+def application_approval(request, pk=None):
+    if request.user.is_authenticated and request.user.is_staff and pk is not None:
+        if request.method == "GET":
+            print(pk)
+            status = request.GET.get('s', None)
+            print(status)
+            if status is not None:
+                try:
+                    application = StudentApplication.objects.get(id=pk)
+                    application.status = status
+                    application.save()
+                except StudentApplication.DoesNotExist:
+                    pass
+            return redirect('/applications')
+
+    return redirect('/login')
+
+
+class RegisterField:
+    def __init__(self, data, files):
+        self.stage = 0
+        self.field_id = None
+        self.data = data
+        self.files = files
+        self.field = None
+        self.status = True
+        self.errors = None
+
+        self.addField()
+        if self.status:
+            self.addCourseField()
+        if self.status:
+            self.addFieldImage()
+
+    def addField(self):
+        serializer = FieldSerializer(data=self.data)
+        if serializer.is_valid():
+            self.field = serializer.save()
+            self.field_id = self.field.id
+            return True
+        self.stage = 1
+        self.status = False
+        self.errors = serializer.errors
+        return False
+
+    def addCourseField(self):
+        serializer = CourseFieldSerializer(data={
+            "field": self.field_id,
+            "course": self.data['course']
+        })
+        if serializer.is_valid():
+            serializer.save()
+            return True
+        self.stage = 2
+        self.status = False
+        self.errors = serializer.errors
+        return False
+
+    def addFieldImage(self):
+        try:
+
+            field_image = FieldImage.objects.create(
+                field=self.field,
+                image=self.files['image_1'],
+                title=self.data['title_1']
+            )
+            field_image.save()
+
+            field_image = FieldImage.objects.create(
+                field=self.field,
+                image=self.files['image_2'],
+                title=self.data['title_2']
+            )
+            field_image.save()
+            pass
+        except Exception as e:
+            self.stage = 3
+            self.status = False
+            self.errors = e
+
+        return True

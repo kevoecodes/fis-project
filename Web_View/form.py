@@ -13,5 +13,5 @@ class StudentApplicationForm(forms.ModelForm):
     # specify the name of model to use
     class Meta:
         model = StudentApplication
-        fields = "__all__"
+        fields = ['student', 'file', 'field']
 

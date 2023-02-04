@@ -55,6 +55,7 @@
                                     <h2 class="text-capitalize breadcrumb-title">{{ field.company_name }}</h2>
                                     </div>
                                     <div class="col-6">
+                                    {% if not request.user.is_staff %}
                                         <div class="row justify-content-end mr-10">
                                          <label for="field_{{ field.id }}" class="custom-checkbox">
                                              {% if field.is_fav %}
@@ -70,6 +71,7 @@
                                               <span>My List</span>
                                         </label>
                                         </div>
+                                    {% endif %}
                                     </div>
                                 </div>
                                 <div class="row justify-content-start m-20">
@@ -78,6 +80,7 @@
                                     </p>
                                 </div>
                                 <div class="row justify-content-end m-10">
+                                {% if not request.user.is_staff %}
                                     <div class="action-btn">
 
                                         {% if field.applied %}
@@ -92,6 +95,19 @@
                                         <!-- The modal -->
 
                                     </div>
+                                {% endif %}
+                                {% if request.user.is_staff %}
+                                    <div class="action-btn">
+
+
+                                        <a href="/applications/{{ field.id }}" class="btn btn-sm btn-primary btn-add m-20">
+                                         View Applications
+                                        </a>
+
+                                        <!-- The modal -->
+
+                                    </div>
+                                {% endif %}
                                     <div class="action-btn">
                                         <a href="/field/{{ field.id }}" class="btn btn-sm btn-primary btn-add m-20">
                                              Read More ...

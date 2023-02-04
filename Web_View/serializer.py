@@ -1,6 +1,7 @@
+from django import forms
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from Fields_Management.models import Student, StudentList, StudentApplication
+from Fields_Management.models import Student, StudentList, StudentApplication, Field, CourseField, FieldImage, Course
 
 
 class NewStudent(serializers.ModelSerializer):
@@ -18,4 +19,28 @@ class StudentListSerializer(serializers.ModelSerializer):
 class StudentApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentApplication
+        fields = "__all__"
+
+
+class FieldSerializer(forms.ModelForm):
+    class Meta:
+        model = Field
+        fields = "__all__"
+
+
+class CourseFieldSerializer(forms.ModelForm):
+    class Meta:
+        model = CourseField
+        fields = "__all__"
+
+
+class FieldImageForm(forms.ModelForm):
+    class Meta:
+        model = FieldImage
+        fields = "__all__"
+
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
         fields = "__all__"

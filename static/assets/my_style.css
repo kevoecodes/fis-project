@@ -163,4 +163,6 @@ img {vertical-align: middle;}
 
 
 /*--------------------------*/
-
+.textarea {
+  height: 100px;
+}

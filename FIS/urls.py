@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path
 from Web_View.views import \
     index, studentLogin, \
-    studentRegistration, Logout, myList, moreDetails, MyListManager, student_application
+    studentRegistration, Logout, myList, moreDetails, MyListManager, student_application, add_field,addCourse, \
+    view_applications, application_approval
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +32,11 @@ urlpatterns = [
     path('logout', Logout, name='student-logout'),
     path('my-list', myList, name='student-list'),
     path('apply/<str:pk>', student_application, name='student-application'),
+    path('add-field', add_field, name='student-application'),
+    path('add-course', addCourse, name='student-application'),
+    path('applications/<str:pk>', view_applications, name='view-applications'),
+    path('applications', view_applications, name='view-applications'),
+    path('application-approval/<str:pk>', application_approval, name='view-applications'),
 
     path('api/list-manager', MyListManager.as_view(), name='list-manager')
 ]
